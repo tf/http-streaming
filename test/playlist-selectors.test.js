@@ -220,7 +220,13 @@ test('simpleSelector switches up even without resolution information', function(
     { attributes: { BANDWIDTH: 1000 } }
   ];
 
-  const selectedPlaylist = simpleSelector(master, 2000, 1, 1, false);
+  const selectedPlaylist = simpleSelector({
+    master,
+    bandwidth: 2000,
+    playerWidth: 1,
+    playerHeight: 1,
+    limitRenditionByPlayerDimensions: false
+  });
 
   assert.equal(selectedPlaylist, master.playlists[1], 'selected the correct playlist');
 });
@@ -242,7 +248,14 @@ test('simpleSelector limits using resolution information when it exists', functi
 
   master.playlists = trickyPlaylists;
 
-  const selectedPlaylist = simpleSelector(master, Config.INITIAL_BANDWIDTH, 444, 790, true, {});
+  const selectedPlaylist = simpleSelector({
+    master,
+    bandwidth: Config.INITIAL_BANDWIDTH,
+    playerWidth: 444,
+    playerHeight: 790,
+    limitRenditionByPlayerDimensions: true,
+    masterPlaylistController: {}
+  });
 
   assert.equal(selectedPlaylist, master.playlists[3], 'selected the playlist with the lowest bandwidth higher than player resolution');
 });
@@ -252,7 +265,13 @@ test('simpleSelector can not limit based on resolution information', function(as
 
   master.playlists = trickyPlaylists;
 
-  const selectedPlaylist = simpleSelector(master, Config.INITIAL_BANDWIDTH, 444, 790, false);
+  const selectedPlaylist = simpleSelector({
+    master,
+    bandwidth: Config.INITIAL_BANDWIDTH,
+    playerWidth: 444,
+    playerHeight: 790,
+    limitRenditionByPlayerDimensions: false
+  });
 
   assert.equal(selectedPlaylist, master.playlists[4], 'selected a playlist based solely on bandwidth');
 });
@@ -275,7 +294,14 @@ test('simpleSelector chooses between current audio playlists for audio only', fu
     }
   };
 
-  const selectedPlaylist = simpleSelector(master, Config.INITIAL_BANDWIDTH, 444, 790, false, masterPlaylistController);
+  const selectedPlaylist = simpleSelector({
+    master,
+    bandwidth: Config.INITIAL_BANDWIDTH,
+    playerWidth: 444,
+    playerHeight: 790,
+    limitRenditionByPlayerDimensions: false,
+    masterPlaylistController
+  });
 
   assert.equal(selectedPlaylist, audioPlaylists[1], 'selected an audio based solely on bandwidth');
 });
@@ -296,22 +322,64 @@ test('simpleSelector experimentalLeastPixelDiffSelector selects least pixel diff
   let nonPixelDiff;
 
   // +1 pixel
-  pixelDiff = simpleSelector(master, Infinity, 1281, 721, true, usePixelDiff);
-  nonPixelDiff = simpleSelector(master, Infinity, 1281, 721, true, {});
+  pixelDiff = simpleSelector({
+    master,
+    bandwidth: Infinity,
+    playerWidth: 1281,
+    playerHeight: 721,
+    limitRenditionByPlayerDimensions: true,
+    masterPlaylistController: usePixelDiff
+  });
+  nonPixelDiff = simpleSelector({
+    master,
+    bandwidth: Infinity,
+    playerWidth: 1281,
+    playerHeight: 721,
+    limitRenditionByPlayerDimensions: true,
+    masterPlaylistController: {}
+  });
 
   assert.equal(pixelDiff, master.playlists[2], '1281w x 721h pixel diff');
   assert.equal(nonPixelDiff, master.playlists[3], '1281w x 721h resolution plus one');
 
   // -1 pixel
-  pixelDiff = simpleSelector(master, Infinity, 1279, 719, true, usePixelDiff);
-  nonPixelDiff = simpleSelector(master, Infinity, 1279, 719, true, {});
+  pixelDiff = simpleSelector({
+    master,
+    bandwidth: Infinity,
+    playerWidth: 1279,
+    playerHeight: 719,
+    limitRenditionByPlayerDimensions: true,
+    masterPlaylistController: usePixelDiff
+  });
+  nonPixelDiff = simpleSelector({
+    master,
+    bandwidth: Infinity,
+    playerWidth: 1279,
+    playerHeight: 719,
+    limitRenditionByPlayerDimensions: true,
+    masterPlaylistController: {}
+  });
 
   assert.equal(pixelDiff, master.playlists[2], '1279w x 719h pixel diff');
   assert.equal(nonPixelDiff, master.playlists[2], '1279w x 719h resolution plus one');
 
   // equal to player resolution
-  pixelDiff = simpleSelector(master, Infinity, 1280, 720, true, usePixelDiff);
-  nonPixelDiff = simpleSelector(master, Infinity, 1280, 720, true, {});
+  pixelDiff = simpleSelector({
+    master,
+    bandwidth: Infinity,
+    playerWidth: 1280,
+    playerHeight: 720,
+    limitRenditionByPlayerDimensions: true,
+    masterPlaylistController: usePixelDiff
+  });
+  nonPixelDiff = simpleSelector({
+    master,
+    bandwidth: Infinity,
+    playerWidth: 1280,
+    playerHeight: 720,
+    limitRenditionByPlayerDimensions: true,
+    masterPlaylistController: {}
+  });
 
   assert.equal(pixelDiff, master.playlists[2], '1280w x 720h pixel diff');
   assert.equal(nonPixelDiff, master.playlists[2], '1280w x 720h resolution plus one');
@@ -320,8 +388,22 @@ test('simpleSelector experimentalLeastPixelDiffSelector selects least pixel diff
   master.playlists.push({ attributes: { BANDWIDTH: bandwidth + 1, RESOLUTION: { width: 1280, height: 720 } } });
 
   // equal to player resolution, chooses higher bandwidth
-  pixelDiff = simpleSelector(master, Infinity, 1280, 720, true, usePixelDiff);
-  nonPixelDiff = simpleSelector(master, Infinity, 1280, 720, true, {});
+  pixelDiff = simpleSelector({
+    master,
+    bandwidth: Infinity,
+    playerWidth: 1280,
+    playerHeight: 720,
+    limitRenditionByPlayerDimensions: true,
+    masterPlaylistController: usePixelDiff
+  });
+  nonPixelDiff = simpleSelector({
+    master,
+    bandwidth: Infinity,
+    playerWidth: 1280,
+    playerHeight: 720,
+    limitRenditionByPlayerDimensions: true,
+    masterPlaylistController: {}
+  });
 
   assert.equal(pixelDiff, master.playlists[5], '1280w x 720h pixel diff higher bandwidth');
   assert.equal(nonPixelDiff, master.playlists[5], '1280w x 720h resolution plus higher bandwidth');

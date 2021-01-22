@@ -174,7 +174,10 @@ test('simpleSelector switches up even without resolution information', function(
     { attributes: { BANDWIDTH: 1000 } }
   ];
 
-  const selectedPlaylist = simpleSelector(master, 2000, 1, 1, false);
+  const selectedPlaylist = simpleSelector({
+    master,
+    bandwidth: 2000
+  });
 
   assert.equal(selectedPlaylist, master.playlists[1], 'selected the correct playlist');
 });
@@ -196,7 +199,13 @@ test('simpleSelector limits using resolution information when it exists', functi
 
   master.playlists = trickyPlaylists;
 
-  const selectedPlaylist = simpleSelector(master, Config.INITIAL_BANDWIDTH, 444, 790, true);
+  const selectedPlaylist = simpleSelector({
+    master,
+    bandwidth: Config.INITIAL_BANDWIDTH,
+    playerWidth: 444,
+    playerHeight: 790,
+    limitRenditionByPlayerDimensions: true
+  });
 
   assert.equal(selectedPlaylist, master.playlists[3], 'selected the playlist with the lowest bandwidth higher than player resolution');
 });
@@ -206,7 +215,13 @@ test('simpleSelector can not limit based on resolution information', function(as
 
   master.playlists = trickyPlaylists;
 
-  const selectedPlaylist = simpleSelector(master, Config.INITIAL_BANDWIDTH, 444, 790, false);
+  const selectedPlaylist = simpleSelector({
+    master,
+    bandwidth: Config.INITIAL_BANDWIDTH,
+    playerWidth: 444,
+    playerHeight: 790,
+    limitRenditionByPlayerDimensions: false
+  });
 
   assert.equal(selectedPlaylist, master.playlists[4], 'selected a playlist based solely on bandwidth');
 });

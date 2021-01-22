@@ -201,7 +201,7 @@ test('simpleSelector limits using resolution information when it exists', functi
 
   const selectedPlaylist = simpleSelector({
     master,
-    bandwidth: Config.INITIAL_BANDWIDTH,
+    bandwidth: 4194304,
     playerWidth: 444,
     playerHeight: 790,
     limitRenditionByPlayerDimensions: true
@@ -217,7 +217,7 @@ test('simpleSelector can not limit based on resolution information', function(as
 
   const selectedPlaylist = simpleSelector({
     master,
-    bandwidth: Config.INITIAL_BANDWIDTH,
+    bandwidth: 4194304,
     playerWidth: 444,
     playerHeight: 790,
     limitRenditionByPlayerDimensions: false

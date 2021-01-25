@@ -207,7 +207,24 @@ test('simpleSelector limits using resolution information when it exists', functi
     limitRenditionByPlayerDimensions: true
   });
 
-  assert.equal(selectedPlaylist, master.playlists[3], 'selected the playlist with the lowest bandwidth higher than player resolution');
+  assert.equal(selectedPlaylist, master.playlists[3], 'selected the playlist with the lowest bandwidth and a resolution that exceeds player size in at least one dimension');
+});
+
+test('simpleSelector can take object fit into account', function(assert) {
+  const master = this.vhs.playlists.master;
+
+  master.playlists = trickyPlaylists;
+
+  const selectedPlaylist = simpleSelector({
+    master,
+    bandwidth: 4194304,
+    playerWidth: 444,
+    playerHeight: 500,
+    playerObjectFit: 'cover',
+    limitRenditionByPlayerDimensions: true
+  });
+
+  assert.equal(selectedPlaylist, master.playlists[2], 'selected the playlist with the lowest bandwidth and a resolution that exceeds player size in both dimensions');
 });
 
 test('simpleSelector can not limit based on resolution information', function(assert) {

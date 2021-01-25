@@ -143,6 +143,10 @@ export const comparePlaylistResolution = function(left, right) {
  *        Current width of the player element (should account for the device pixel ratio)
  * @param {number} settings.playerHeight
  *        Current height of the player element (should account for the device pixel ratio)
+ * @param {number} settings.playerObjectFit
+ *        Current value of the video element's object-fit CSS property. Allows taking into
+ *        account that the video might be scaled up to cover the media element when selecting
+ *        media playlists based on player size.
  * @param {boolean} settings.limitRenditionByPlayerDimensions
  *        True if the player width and height should be used during the selection, false otherwise
  * @return {Playlist} the highest bitrate playlist less than the
@@ -155,6 +159,7 @@ export const simpleSelector = function(settings) {
     bandwidth: playerBandwidth,
     playerWidth,
     playerHeight,
+    playerObjectFit,
     limitRenditionByPlayerDimensions
   } = settings;
 
@@ -261,7 +266,18 @@ export const simpleSelector = function(settings) {
   // find the smallest variant that is larger than the player
   // if there is no match of exact resolution
   if (!resolutionBestRep) {
-    resolutionPlusOneList = haveResolution.filter((rep) => rep.width > playerWidth || rep.height > playerHeight);
+    resolutionPlusOneList = haveResolution.filter((rep) => {
+      if (playerObjectFit === 'cover') {
+        // video will be scaled up to cover the player. We need to
+        // make sure rendition is at least as wide and as high as the
+        // player.
+        return rep.width > playerWidth && rep.height > playerHeight;
+      }
+
+      // video will be scaled down to fit inside the player soon as
+      // its resolution exceeds player size in at least one dimension.
+      return rep.width > playerWidth || rep.height > playerHeight;
+    });
 
     // find all the variants have the same smallest resolution
     resolutionPlusOneSmallest = resolutionPlusOneList.filter((rep) => rep.width === resolutionPlusOneList[0].width &&
@@ -323,6 +339,7 @@ export const lastBandwidthSelector = function() {
     bandwidth: this.systemBandwidth,
     playerWidth: parseInt(safeGetComputedStyle(this.tech_.el(), 'width'), 10) * pixelRatio,
     playerHeight: parseInt(safeGetComputedStyle(this.tech_.el(), 'height'), 10) * pixelRatio,
+    playerObjectFit: safeGetComputedStyle(this.tech_.el(), 'objectFit'),
     limitRenditionByPlayerDimensions: this.limitRenditionByPlayerDimensions
   });
 };
@@ -361,6 +378,7 @@ export const movingAverageBandwidthSelector = function(decay) {
       bandwidth: average,
       playerWidth: parseInt(safeGetComputedStyle(this.tech_.el(), 'width'), 10) * pixelRatio,
       playerHeight: parseInt(safeGetComputedStyle(this.tech_.el(), 'height'), 10) * pixelRatio,
+      playerObjectFit: safeGetComputedStyle(this.tech_.el(), 'objectFit'),
       limitRenditionByPlayerDimensions: this.limitRenditionByPlayerDimensions
     });
   };

@@ -210,6 +210,23 @@ test('simpleSelector limits using resolution information when it exists', functi
   assert.equal(selectedPlaylist, master.playlists[3], 'selected the playlist with the lowest bandwidth and a resolution that exceeds player size in at least one dimension');
 });
 
+test('simpleSelector does not take object fit into account by default', function(assert) {
+  const master = this.vhs.playlists.master;
+
+  master.playlists = trickyPlaylists;
+
+  const selectedPlaylist = simpleSelector({
+    master,
+    bandwidth: 4194304,
+    playerWidth: 444,
+    playerHeight: 500,
+    playerObjectFit: 'cover',
+    limitRenditionByPlayerDimensions: true
+  });
+
+  assert.equal(selectedPlaylist, master.playlists[3], 'selected the playlist with the lowest bandwidth and a resolution that exceeds player size in at least one dimension');
+});
+
 test('simpleSelector can take object fit into account', function(assert) {
   const master = this.vhs.playlists.master;
 
@@ -221,6 +238,7 @@ test('simpleSelector can take object fit into account', function(assert) {
     playerWidth: 444,
     playerHeight: 500,
     playerObjectFit: 'cover',
+    usePlayerObjectFit: true,
     limitRenditionByPlayerDimensions: true
   });
 

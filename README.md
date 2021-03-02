@@ -50,6 +50,7 @@ Video.js Compatibility: 6.0, 7.0
       - [enableLowInitialPlaylist](#enablelowinitialplaylist)
       - [limitRenditionByPlayerDimensions](#limitrenditionbyplayerdimensions)
       - [useDevicePixelRatio](#usedevicepixelratio)
+      - [usePlayerObjectFit](#useplayerobjectfit)
       - [smoothQualityChange](#smoothqualitychange)
       - [allowSeeksWithinUnsafeLiveWindow](#allowseekswithinunsafelivewindow)
       - [customTagParsers](#customtagparsers)
@@ -400,6 +401,15 @@ This setting is `true` by default.
 
 If true, this will take the device pixel ratio into account when doing rendition switching. This means that if you have a player with the width of `540px` in a high density display with a device pixel ratio of 2, a rendition of `1080p` will be allowed.
 This setting is `false` by default.
+
+##### usePlayerObjectFit
+* Type: `boolean`
+* can be used as an initialization option.
+
+If true, the video element's `object-fit` CSS property will be taken
+into account when doing rendition switching. This ensures that a
+suitable rendition is selected for videos that are scaled up to cover
+the media element. This setting is `false` by default.
 
 ##### smoothQualityChange
 * Type: `boolean`

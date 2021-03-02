@@ -144,9 +144,12 @@ export const comparePlaylistResolution = function(left, right) {
  * @param {number} settings.playerHeight
  *        Current height of the player element (should account for the device pixel ratio)
  * @param {number} settings.playerObjectFit
- *        Current value of the video element's object-fit CSS property. Allows taking into
- *        account that the video might be scaled up to cover the media element when selecting
- *        media playlists based on player size.
+ *        Current value of the video element's object-fit CSS property.
+ * @param {boolean} settings.usePlayerObjectFit
+ *        True if the video element's object-fit CSS property shall be taken into account
+ *        when selecting media playlists based on player size, false otherwise.
+ *        Ensures a suitable renditions is selected for videos that are scaled up to cover
+ *        the media element.
  * @param {boolean} settings.limitRenditionByPlayerDimensions
  *        True if the player width and height should be used during the selection, false otherwise
  * @return {Playlist} the highest bitrate playlist less than the
@@ -160,6 +163,7 @@ export const simpleSelector = function(settings) {
     playerWidth,
     playerHeight,
     playerObjectFit,
+    usePlayerObjectFit,
     limitRenditionByPlayerDimensions
   } = settings;
 
@@ -267,7 +271,7 @@ export const simpleSelector = function(settings) {
   // if there is no match of exact resolution
   if (!resolutionBestRep) {
     resolutionPlusOneList = haveResolution.filter((rep) => {
-      if (playerObjectFit === 'cover') {
+      if (playerObjectFit === 'cover' && usePlayerObjectFit) {
         // video will be scaled up to cover the player. We need to
         // make sure rendition is at least as wide and as high as the
         // player.
@@ -340,6 +344,7 @@ export const lastBandwidthSelector = function() {
     playerWidth: parseInt(safeGetComputedStyle(this.tech_.el(), 'width'), 10) * pixelRatio,
     playerHeight: parseInt(safeGetComputedStyle(this.tech_.el(), 'height'), 10) * pixelRatio,
     playerObjectFit: safeGetComputedStyle(this.tech_.el(), 'objectFit'),
+    usePlayerObjectFit: this.usePlayerObjectFit,
     limitRenditionByPlayerDimensions: this.limitRenditionByPlayerDimensions
   });
 };
@@ -379,6 +384,7 @@ export const movingAverageBandwidthSelector = function(decay) {
       playerWidth: parseInt(safeGetComputedStyle(this.tech_.el(), 'width'), 10) * pixelRatio,
       playerHeight: parseInt(safeGetComputedStyle(this.tech_.el(), 'height'), 10) * pixelRatio,
       playerObjectFit: safeGetComputedStyle(this.tech_.el(), 'objectFit'),
+      usePlayerObjectFit: this.usePlayerObjectFit,
       limitRenditionByPlayerDimensions: this.limitRenditionByPlayerDimensions
     });
   };

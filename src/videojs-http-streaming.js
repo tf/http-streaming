@@ -625,6 +625,7 @@ class VhsHandler extends Component {
     this.options_.handleManifestRedirects = this.options_.handleManifestRedirects === false ? false : true;
     this.options_.limitRenditionByPlayerDimensions = this.options_.limitRenditionByPlayerDimensions === false ? false : true;
     this.options_.useDevicePixelRatio = this.options_.useDevicePixelRatio || false;
+    this.options_.usePlayerObjectFit = this.options_.usePlayerObjectFit || false;
     this.options_.smoothQualityChange = this.options_.smoothQualityChange || false;
     this.options_.useBandwidthFromLocalStorage =
       typeof this.source_.useBandwidthFromLocalStorage !== 'undefined' ?
@@ -672,6 +673,7 @@ class VhsHandler extends Component {
     [
       'withCredentials',
       'useDevicePixelRatio',
+      'usePlayerObjectFit',
       'limitRenditionByPlayerDimensions',
       'bandwidth',
       'smoothQualityChange',
@@ -696,6 +698,7 @@ class VhsHandler extends Component {
 
     this.limitRenditionByPlayerDimensions = this.options_.limitRenditionByPlayerDimensions;
     this.useDevicePixelRatio = this.options_.useDevicePixelRatio;
+    this.usePlayerObjectFit = this.options_.usePlayerObjectFit;
   }
   /**
    * called when player.src gets called, handle a new source

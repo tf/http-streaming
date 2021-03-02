@@ -390,7 +390,7 @@ export const lastBandwidthSelector = function() {
     bandwidth: this.systemBandwidth,
     playerWidth: parseInt(safeGetComputedStyle(this.tech_.el(), 'width'), 10) * pixelRatio,
     playerHeight: parseInt(safeGetComputedStyle(this.tech_.el(), 'height'), 10) * pixelRatio,
-    playerObjectFit: safeGetComputedStyle(this.tech_.el(), 'objectFit'),
+    playerObjectFit: this.usePlayerObjectFit ? safeGetComputedStyle(this.tech_.el(), 'objectFit') : '',
     limitRenditionByPlayerDimensions: this.limitRenditionByPlayerDimensions,
     masterPlaylistController: this.masterPlaylistController_
   });
@@ -442,7 +442,7 @@ export const movingAverageBandwidthSelector = function(decay) {
       bandwidth: average,
       playerWidth: parseInt(safeGetComputedStyle(this.tech_.el(), 'width'), 10) * pixelRatio,
       playerHeight: parseInt(safeGetComputedStyle(this.tech_.el(), 'height'), 10) * pixelRatio,
-      playerObjectFit: safeGetComputedStyle(this.tech_.el(), 'objectFit'),
+      playerObjectFit: this.usePlayerObjectFit ? safeGetComputedStyle(this.tech_.el(), 'objectFit') : '',
       limitRenditionByPlayerDimensions: this.limitRenditionByPlayerDimensions,
       masterPlaylistController: this.masterPlaylistController_
     });
